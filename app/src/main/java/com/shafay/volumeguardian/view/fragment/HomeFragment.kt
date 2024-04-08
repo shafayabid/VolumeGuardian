@@ -38,4 +38,9 @@ class HomeFragment : Fragment() {
         }
 
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        activity?.stopService(Intent(activity, DetectAudioService::class.java))
+    }
 }
