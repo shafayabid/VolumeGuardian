@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.shafay.volumeguardian.R
 import com.shafay.volumeguardian.view.activity.MainActivity
+import com.shafay.volumeguardian.view.fragment.HomeFragment
 
 class DetectAudioService : Service() {
 
@@ -43,19 +44,16 @@ class DetectAudioService : Service() {
     private fun initNotification() {
 
         // Create an explicit intent for an Activity in your app.
-        val intent = Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
 
-        var builder = NotificationCompat.Builder(this, NotificationConsts.NOTIFICATION_ID)
+        var builder = NotificationCompat.Builder(applicationContext, NotificationConsts.NOTIFICATION_ID)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle(NotificationConsts.NOTIFICATION_CONTENT_TITLE)
             .setContentText(NotificationConsts.NOTIFICATION_CONTENT_TEXT)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
-            .setAutoCancel(false)
             .setOngoing(true)
 
         with(NotificationManagerCompat.from(applicationContext)) {
