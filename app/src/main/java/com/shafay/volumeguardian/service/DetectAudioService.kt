@@ -3,25 +3,40 @@ package com.shafay.volumeguardian.service
 import android.Manifest
 import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.AudioManager
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.google.mediapipe.tasks.audio.core.RunningMode
 import com.shafay.volumeguardian.R
+import com.shafay.volumeguardian.mediapipe.AudioClassifierHelper
 import com.shafay.volumeguardian.view.activity.MainActivity
-import com.shafay.volumeguardian.view.fragment.HomeFragment
 
-class DetectAudioService : Service() {
+class DetectAudioService : Service(), AudioClassifierHelper.ClassifierListener {
 
     private val TAG = "DetectAudioService"
+    private lateinit var audioClassifierHelper: AudioClassifierHelper
+    private lateinit var audioManager: AudioManager
 
     override fun onCreate() {
         super.onCreate()
 
+        audioManager =
+            applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
         initNotification()
+
+        audioClassifierHelper =
+            AudioClassifierHelper(
+                context = applicationContext,
+                runningMode = RunningMode.AUDIO_STREAM,
+                listener = this
+            )
 
     }
 
@@ -38,6 +53,7 @@ class DetectAudioService : Service() {
         Log.d(TAG, "onDestroy: ")
 
         NotificationManagerCompat.from(applicationContext).cancel(1)
+        audioClassifierHelper.stopAudioClassification()
 
     }
 
@@ -62,7 +78,6 @@ class DetectAudioService : Service() {
                     Manifest.permission.POST_NOTIFICATIONS
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                // TODO: Consider calling
                 // ActivityCompat#requestPermissions
                 // here to request the missing permissions, and then overriding
                 // public fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
@@ -76,6 +91,27 @@ class DetectAudioService : Service() {
             notify(1, builder.build())
         }
 
+    }
+
+    override fun onError(error: String) {
+
+    }
+
+    override fun onResult(resultBundle: AudioClassifierHelper.ResultBundle) {
+        resultBundle.results.forEach { 
+            it.classificationResults().forEach { 
+                it.classifications().forEach { 
+                    it.categories().forEach {
+                        Log.d(TAG, "onResult: ${it.categoryName()}, ${it.score()}")
+                        if(it.categoryName() == "Speech"){
+                            audioManager.adjustVolume(AudioManager.ADJUST_MUTE, AudioManager.FLAG_PLAY_SOUND)
+                        }else{
+                            audioManager.adjustVolume(AudioManager.ADJUST_UNMUTE, AudioManager.FLAG_PLAY_SOUND)
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }
