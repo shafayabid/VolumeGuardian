@@ -61,16 +61,18 @@ class DetectAudioService : Service(), AudioClassifierHelper.ClassifierListener {
 
         // Create an explicit intent for an Activity in your app.
         val intent = Intent(applicationContext, MainActivity::class.java)
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
 
-        var builder = NotificationCompat.Builder(applicationContext, NotificationConsts.NOTIFICATION_ID)
-            .setSmallIcon(R.drawable.ic_launcher_background)
-            .setContentTitle(NotificationConsts.NOTIFICATION_CONTENT_TITLE)
-            .setContentText(NotificationConsts.NOTIFICATION_CONTENT_TEXT)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingIntent)
-            .setOngoing(true)
+        var builder =
+            NotificationCompat.Builder(applicationContext, NotificationConsts.NOTIFICATION_ID)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle(NotificationConsts.NOTIFICATION_CONTENT_TITLE)
+                .setContentText(NotificationConsts.NOTIFICATION_CONTENT_TEXT)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setOngoing(true)
 
         with(NotificationManagerCompat.from(applicationContext)) {
             if (ActivityCompat.checkSelfPermission(
@@ -98,15 +100,21 @@ class DetectAudioService : Service(), AudioClassifierHelper.ClassifierListener {
     }
 
     override fun onResult(resultBundle: AudioClassifierHelper.ResultBundle) {
-        resultBundle.results.forEach { 
-            it.classificationResults().forEach { 
-                it.classifications().forEach { 
+        resultBundle.results.forEach {
+            it.classificationResults().forEach {
+                it.classifications().forEach {
                     it.categories().forEach {
                         Log.d(TAG, "onResult: ${it.categoryName()}, ${it.score()}")
-                        if(it.categoryName() == "Speech"){
-                            audioManager.adjustVolume(AudioManager.ADJUST_MUTE, AudioManager.FLAG_PLAY_SOUND)
-                        }else{
-                            audioManager.adjustVolume(AudioManager.ADJUST_UNMUTE, AudioManager.FLAG_PLAY_SOUND)
+                        if (it.categoryName() == "Speech") {
+                            audioManager.adjustVolume(
+                                AudioManager.ADJUST_MUTE,
+                                AudioManager.FLAG_PLAY_SOUND
+                            )
+                        } else {
+                            audioManager.adjustVolume(
+                                AudioManager.ADJUST_UNMUTE,
+                                AudioManager.FLAG_PLAY_SOUND
+                            )
                         }
                     }
                 }

@@ -2,4 +2,10 @@
     <string name="app_name">Volume Guardian</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="activate_volume_control">Activate Volume Control</string>
+    <string name="audio_warning_title">You Are Not Playing Any Audio Right Now, Do You Still Wish to Continue?</string>
+    <string name="note">Note:</string>
+    <string name="warning_desc">Volume Guardian adjusts your volume when you are playing music in the background. Volume guardian is not useful when there is no music playing!</string>
+    <string name="cancel">Cancel</string>
+    <string name="continue_">Continue</string>
 </resources>

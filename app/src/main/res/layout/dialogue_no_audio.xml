@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/bg_turquoise"
+        app:cardCornerRadius="@dimen/_10sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_16sdp">
+
+            <TextView
+                android:id="@+id/tv_warning_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_extrabold"
+                android:gravity="center"
+                android:text="@string/audio_warning_title"
+                android:textSize="@dimen/_16sdp"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toTopOf="@+id/tv_note"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_note"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:fontFamily="@font/poppins"
+                android:text="@string/note"
+                android:textSize="@dimen/_12sdp"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toTopOf="@+id/tv_warning_desc"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_warning_title" />
+
+            <TextView
+                android:id="@+id/tv_warning_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:fontFamily="@font/poppins"
+                android:text="@string/warning_desc"
+                android:textSize="@dimen/_12sdp"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toTopOf="@+id/btn_cancel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_note" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:background="@drawable/bg_cancel"
+                android:text="@string/cancel"
+                android:textAllCaps="false"
+                android:textSize="@dimen/_12sdp"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_warning_desc"
+                app:layout_constraintEnd_toStartOf="@+id/btn_continue"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_continue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:background="@drawable/bg_continue"
+                android:text="@string/continue_"
+                android:textAllCaps="false"
+                android:textSize="@dimen/_12sdp"
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/btn_cancel"
+                app:layout_constraintStart_toEndOf="@+id/btn_cancel"
+                app:layout_constraintBottom_toBottomOf="@+id/btn_cancel"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
