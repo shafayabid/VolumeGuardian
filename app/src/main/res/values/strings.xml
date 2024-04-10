@@ -8,4 +8,6 @@
     <string name="warning_desc">Volume Guardian adjusts your volume when you are playing music in the background. Volume guardian is not useful when there is no music playing!</string>
     <string name="cancel">Cancel</string>
     <string name="continue_">Continue</string>
+    <string name="volume_control_disabled">Volume Control Disabled!</string>
+    <string name="raise_device_volume">Please raise device volume</string>
 </resources>
