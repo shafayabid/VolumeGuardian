@@ -6,12 +6,15 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.pm.ServiceInfo
 import android.media.AudioManager
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.ServiceCompat
 import com.google.mediapipe.tasks.audio.core.RunningMode
 import com.shafay.volumeguardian.R
 import com.shafay.volumeguardian.mediapipe.AudioClassifierHelper
@@ -23,13 +26,31 @@ class DetectAudioService : Service(), AudioClassifierHelper.ClassifierListener {
     private lateinit var audioClassifierHelper: AudioClassifierHelper
     private lateinit var audioManager: AudioManager
 
+    private val intent by lazy {
+        Intent(applicationContext, MainActivity::class.java)
+    }
+
+    private val pendingIntent: PendingIntent by lazy {
+        PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+    }
+
+    private val builder by lazy {
+        NotificationCompat.Builder(applicationContext, NotificationConsts.NOTIFICATION_ID)
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setContentTitle(NotificationConsts.NOTIFICATION_CONTENT_TITLE)
+            .setContentText(NotificationConsts.NOTIFICATION_CONTENT_TEXT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .setOngoing(true)
+    }
+
     override fun onCreate() {
         super.onCreate()
 
         audioManager =
             applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-        initNotification()
+//        initNotification()
 
         audioClassifierHelper =
             AudioClassifierHelper(
@@ -41,6 +62,16 @@ class DetectAudioService : Service(), AudioClassifierHelper.ClassifierListener {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        ServiceCompat.startForeground(
+            this,
+            100,
+            builder.build(),
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+            } else {
+                0
+            },
+        )
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -52,27 +83,13 @@ class DetectAudioService : Service(), AudioClassifierHelper.ClassifierListener {
         super.onDestroy()
         Log.d(TAG, "onDestroy: ")
 
-        NotificationManagerCompat.from(applicationContext).cancel(1)
+//        NotificationManagerCompat.from(applicationContext).cancel(1)
         audioClassifierHelper.stopAudioClassification()
 
     }
 
     private fun initNotification() {
 
-        // Create an explicit intent for an Activity in your app.
-        val intent = Intent(applicationContext, MainActivity::class.java)
-        val pendingIntent: PendingIntent =
-            PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-
-
-        var builder =
-            NotificationCompat.Builder(applicationContext, NotificationConsts.NOTIFICATION_ID)
-                .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle(NotificationConsts.NOTIFICATION_CONTENT_TITLE)
-                .setContentText(NotificationConsts.NOTIFICATION_CONTENT_TEXT)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentIntent(pendingIntent)
-                .setOngoing(true)
 
         with(NotificationManagerCompat.from(applicationContext)) {
             if (ActivityCompat.checkSelfPermission(

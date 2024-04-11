@@ -10,8 +10,10 @@ import android.database.ContentObserver
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,12 +39,13 @@ class HomeFragment : Fragment() {
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
-                Toast.makeText(context, "Permission request granted", Toast.LENGTH_LONG).show()
-                if (audioManager.isMusicActive) {
-                    activity?.startService(Intent(activity, DetectAudioService::class.java))
-                } else {
-                    context?.let { context ->
-                        activity?.let { activity ->
+                context?.let { context ->
+                    activity?.let { activity ->
+                        Toast.makeText(context, "Permission request granted", Toast.LENGTH_LONG)
+                            .show()
+                        if (audioManager.isMusicActive) {
+                            startService(context, activity)
+                        } else {
                             showNoMusicDialogue(context, activity)
                         }
                     }
@@ -85,7 +88,7 @@ class HomeFragment : Fragment() {
                 }
             }
             binding.ivSpeakerDisabled.setOnClickListener {
-                Toast.makeText(context, "Please Raise Music Volume!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Please Increase Music Volume!", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -94,6 +97,7 @@ class HomeFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.d(TAG, "onDestroy: ")
         activity?.stopService(Intent(activity, DetectAudioService::class.java))
     }
 
@@ -104,7 +108,7 @@ class HomeFragment : Fragment() {
                 Manifest.permission.RECORD_AUDIO
             ) == PackageManager.PERMISSION_GRANTED -> {
                 if (audioManager.isMusicActive) {
-                    activity.startService(Intent(activity, DetectAudioService::class.java))
+                    startService(context, activity)
                 } else {
                     showNoMusicDialogue(context, activity)
                 }
@@ -115,6 +119,14 @@ class HomeFragment : Fragment() {
                     Manifest.permission.RECORD_AUDIO
                 )
             }
+        }
+    }
+
+    fun startService(context: Context, activity: Activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(Intent(activity, DetectAudioService::class.java))
+        } else {
+            activity.startService(Intent(activity, DetectAudioService::class.java))
         }
     }
 
@@ -130,7 +142,7 @@ class HomeFragment : Fragment() {
         dialogue.setCancelable(false)
 
         dialogueBinding.btnContinue.setOnClickListener {
-            activity.startService(Intent(activity, DetectAudioService::class.java))
+            startService(context, activity)
             dialogue.dismiss()
         }
 
