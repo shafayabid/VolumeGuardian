@@ -2,6 +2,7 @@ package com.shafay.volumeguardian.view.fragment
 
 import android.Manifest
 import android.app.Activity
+import android.app.ActivityManager
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -41,21 +42,29 @@ class HomeFragment : Fragment() {
             if (isGranted) {
                 context?.let { context ->
                     activity?.let { activity ->
-                        Toast.makeText(context, "Permission request granted", Toast.LENGTH_LONG)
-                            .show()
-                        if (audioManager.isMusicActive) {
-                            startService(context, activity)
-                        } else {
-                            showNoMusicDialogue(context, activity)
+                        audioManager?.let {
+                            if (it.isMusicActive) {
+                                startService(context, activity)
+                            } else {
+                                if (!isMyServiceRunning(context, DetectAudioService::class.java)) {
+                                    showNoMusicDialogue(context, activity)
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Volume Guardian is Already Running",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
                         }
                     }
                 }
             } else {
-                Toast.makeText(context, "Permission request denied", Toast.LENGTH_LONG).show()
+
             }
         }
 
-    private lateinit var audioManager: AudioManager
+    private var audioManager: AudioManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,10 +116,20 @@ class HomeFragment : Fragment() {
                 context,
                 Manifest.permission.RECORD_AUDIO
             ) == PackageManager.PERMISSION_GRANTED -> {
-                if (audioManager.isMusicActive) {
-                    startService(context, activity)
-                } else {
-                    showNoMusicDialogue(context, activity)
+                audioManager?.let {
+                    if (it.isMusicActive) {
+                        startService(context, activity)
+                    } else {
+                        if (!isMyServiceRunning(context, DetectAudioService::class.java)) {
+                            showNoMusicDialogue(context, activity)
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Volume Guardian is Already Running",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
                 }
             }
 
@@ -122,11 +141,15 @@ class HomeFragment : Fragment() {
         }
     }
 
-    fun startService(context: Context, activity: Activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(Intent(activity, DetectAudioService::class.java))
+    private fun startService(context: Context, activity: Activity) {
+        if (!isMyServiceRunning(context, DetectAudioService::class.java)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(Intent(activity, DetectAudioService::class.java))
+            } else {
+                activity.startService(Intent(activity, DetectAudioService::class.java))
+            }
         } else {
-            activity.startService(Intent(activity, DetectAudioService::class.java))
+            Toast.makeText(context, "Volume Guardian is Already Running", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -163,10 +186,12 @@ class HomeFragment : Fragment() {
     }
 
     private fun checkAudio() {
-        if (audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) == 0) {
-            showDisabledButton()
-        } else {
-            showEnabledButton()
+        audioManager?.let {
+            if (it.getStreamVolume(AudioManager.STREAM_MUSIC) == 0) {
+                showDisabledButton()
+            } else {
+                showEnabledButton()
+            }
         }
     }
 
@@ -188,6 +213,17 @@ class HomeFragment : Fragment() {
         binding.tvRaiseVolume.visibility = View.VISIBLE
     }
 
+    private fun isMyServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
+        val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
+        manager?.let {
+            for (service in it.getRunningServices(Int.MAX_VALUE)) {
+                if (serviceClass.name == service.service.className) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
 
     inner class SettingsContentObserver(handler: Handler?) : ContentObserver(handler) {
         override fun deliverSelfNotifications(): Boolean {
