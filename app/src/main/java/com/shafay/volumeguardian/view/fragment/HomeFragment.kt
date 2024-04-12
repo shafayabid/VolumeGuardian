@@ -112,12 +112,31 @@ class HomeFragment : Fragment() {
                 binding.ivSpeaker.setOnClickListener {
                     checkAndRequestAudioPermission(context, activity)
                 }
+                binding.ivSpeakerActive.setOnClickListener{
+                    if(isMyServiceRunning(context, DetectAudioService::class.java)){
+                        activity.stopService(Intent(activity, DetectAudioService::class.java))
+                        checkAudio()
+                    }
+                }
             }
             binding.ivSpeakerDisabled.setOnClickListener {
                 Toast.makeText(context, "Please Increase Music Volume!", Toast.LENGTH_SHORT).show()
             }
         }
 
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        context?.let {
+            if(isMyServiceRunning(it, DetectAudioService::class.java)){
+                showActiveButton()
+            }else {
+                checkAudio()
+            }
+        }
 
     }
 
@@ -191,6 +210,7 @@ class HomeFragment : Fragment() {
             } else {
                 activity.startService(Intent(activity, DetectAudioService::class.java))
             }
+            showActiveButton()
         } else {
             Toast.makeText(context, "Volume Guardian is Already Running", Toast.LENGTH_SHORT).show()
         }
@@ -261,19 +281,34 @@ class HomeFragment : Fragment() {
     private fun showEnabledButton() {
         binding.ivSpeaker.visibility = View.VISIBLE
         binding.ivSpeakerDisabled.visibility = View.GONE
+        binding.ivSpeakerActive.visibility = View.GONE
 
         binding.tvActivateVolume.visibility = View.VISIBLE
         binding.tvDisabledVolume.visibility = View.GONE
         binding.tvRaiseVolume.visibility = View.GONE
+        binding.tvActive.visibility = View.GONE
     }
 
     private fun showDisabledButton() {
         binding.ivSpeaker.visibility = View.GONE
+        binding.ivSpeakerActive.visibility = View.GONE
         binding.ivSpeakerDisabled.visibility = View.VISIBLE
 
         binding.tvActivateVolume.visibility = View.GONE
+        binding.tvActive.visibility = View.GONE
         binding.tvDisabledVolume.visibility = View.VISIBLE
         binding.tvRaiseVolume.visibility = View.VISIBLE
+    }
+
+    private fun showActiveButton() {
+        binding.ivSpeaker.visibility = View.GONE
+        binding.ivSpeakerActive.visibility = View.VISIBLE
+        binding.ivSpeakerDisabled.visibility = View.GONE
+
+        binding.tvActivateVolume.visibility = View.GONE
+        binding.tvActive.visibility = View.VISIBLE
+        binding.tvDisabledVolume.visibility = View.GONE
+        binding.tvRaiseVolume.visibility = View.GONE
     }
 
     private fun isMyServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
@@ -302,7 +337,10 @@ class HomeFragment : Fragment() {
 
         override fun onChange(selfChange: Boolean) {
             super.onChange(selfChange)
-            checkAudio()
+            context?.let {
+                if (!isMyServiceRunning(it, DetectAudioService::class.java))
+                    checkAudio()
+            }
         }
     }
 
