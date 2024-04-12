@@ -11,9 +11,11 @@ import android.database.ContentObserver
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.AudioManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +25,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.shafay.volumeguardian.databinding.DialogueNoAudioBinding
+import com.shafay.volumeguardian.databinding.DialoguePermissionBinding
 import com.shafay.volumeguardian.databinding.FragmentHomeBinding
 import com.shafay.volumeguardian.service.DetectAudioService
 
@@ -35,7 +38,11 @@ class HomeFragment : Fragment() {
         FragmentHomeBinding.inflate(layoutInflater)
     }
 
-    val requestPermissionLauncher =
+    private val sharedPref by lazy {
+        activity?.getPreferences(Context.MODE_PRIVATE)
+    }
+
+    private val requestPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
@@ -64,12 +71,22 @@ class HomeFragment : Fragment() {
             }
         }
 
+    private val requestNotificationLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) {
+
+        }
+
     private var audioManager: AudioManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         context?.let {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                checkAndRequestNotificationPermission(it)
+            }
             audioManager = it.getSystemService(Context.AUDIO_SERVICE) as AudioManager
             checkAudio()
         }
@@ -134,8 +151,34 @@ class HomeFragment : Fragment() {
             }
 
             else -> {
-                requestPermissionLauncher.launch(
-                    Manifest.permission.RECORD_AUDIO
+                sharedPref?.let {
+                    var count = it.getInt("micCount", 0)
+                    if (count > 1) {
+                        showPermissionDialogue(context)
+                    } else {
+                        requestPermissionLauncher.launch(
+                            Manifest.permission.RECORD_AUDIO
+                        )
+                        count += 1
+                        it.edit().putInt("micCount", count).apply()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun checkAndRequestNotificationPermission(context: Context) {
+        when {
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED -> {
+
+            }
+
+            else -> {
+                requestNotificationLauncher.launch(
+                    Manifest.permission.POST_NOTIFICATIONS
                 )
             }
         }
@@ -166,6 +209,26 @@ class HomeFragment : Fragment() {
 
         dialogueBinding.btnContinue.setOnClickListener {
             startService(context, activity)
+            dialogue.dismiss()
+        }
+
+        dialogueBinding.btnCancel.setOnClickListener {
+            dialogue.dismiss()
+        }
+
+        dialogue.show()
+    }
+
+    private fun showPermissionDialogue(context: Context) {
+        val dialogueBinding = DialoguePermissionBinding.inflate(layoutInflater)
+        val dialogue = Dialog(context)
+        dialogue.setContentView(dialogueBinding.root)
+        dialogue.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        dialogue.setCancelable(false)
+
+        dialogueBinding.btnAllow.setOnClickListener {
+            goToSettings(context)
             dialogue.dismiss()
         }
 
@@ -223,6 +286,13 @@ class HomeFragment : Fragment() {
             }
         }
         return false
+    }
+
+    private fun goToSettings(context: Context){
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package", context.packageName, null)
+        intent.setData(uri)
+        startActivity(intent)
     }
 
     inner class SettingsContentObserver(handler: Handler?) : ContentObserver(handler) {

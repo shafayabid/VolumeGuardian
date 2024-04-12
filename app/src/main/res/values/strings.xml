@@ -10,4 +10,7 @@
     <string name="continue_">Continue</string>
     <string name="volume_control_disabled">Volume Control Disabled!</string>
     <string name="raise_device_volume">Please raise device volume</string>
+    <string name="we_require_microphone_permission">We Require Microphone Permission !</string>
+    <string name="permission_text">The application needs to access your microphone so that it knows when you start speaking. Once you start speaking, your music volume will be reduced automatically.</string>
+    <string name="allow">Allow</string>
 </resources>

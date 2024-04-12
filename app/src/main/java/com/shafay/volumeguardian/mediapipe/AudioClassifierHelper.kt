@@ -106,6 +106,14 @@ class AudioClassifierHelper(
             Log.e(
                 TAG, "MP task failed to load with error: " + e.message
             )
+        } catch (e: UnsatisfiedLinkError){
+            listener?.onError(
+                "Audio Classifier failed to initialize. See error logs for details"
+            )
+
+            Log.e(
+                TAG, "MP task failed to load with error: " + e.message
+            )
         }
     }
 
