@@ -21,13 +21,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.shafay.volumeguardian.databinding.DialogueNoAudioBinding
 import com.shafay.volumeguardian.databinding.DialoguePermissionBinding
 import com.shafay.volumeguardian.databinding.FragmentHomeBinding
 import com.shafay.volumeguardian.service.DetectAudioService
+import com.shafay.volumeguardian.view.activity.MainActivity
 
 
 class HomeFragment : Fragment() {
@@ -101,6 +104,16 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        activity?.let{
+            if(it is MainActivity){
+                val callback = it.onBackPressedDispatcher.addCallback(it) {
+                    Log.d(TAG, "backpress called from Home Fragment ")
+                    backPress(requireContext(), it)
+                }
+            }
+        }
+
         return binding.root
     }
 
@@ -309,6 +322,17 @@ class HomeFragment : Fragment() {
         binding.tvActive.visibility = View.VISIBLE
         binding.tvDisabledVolume.visibility = View.GONE
         binding.tvRaiseVolume.visibility = View.GONE
+    }
+
+    private fun backPress(context: Context, activity: Activity){
+        if(isMyServiceRunning(context, DetectAudioService::class.java)){
+            activity.stopService(Intent(activity, DetectAudioService::class.java))
+            checkAudio()
+        }else{
+            if(activity is MainActivity){
+                activity.finish()
+            }
+        }
     }
 
     private fun isMyServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
