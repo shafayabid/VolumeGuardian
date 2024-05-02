@@ -15,4 +15,9 @@
         android:name="com.shafay.volumeguardian.view.fragment.StartFragment"
         android:label="fragment_start"
         tools:layout="@layout/fragment_start" />
+    <fragment
+        android:id="@+id/FAQFragment"
+        android:name="com.shafay.volumeguardian.view.fragment.FAQFragment"
+        android:label="fragment_f_a_q"
+        tools:layout="@layout/fragment_f_a_q" />
 </navigation>

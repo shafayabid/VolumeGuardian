@@ -26,7 +26,8 @@
             android:textSize="@dimen/_12sdp"
             android:textColor="@color/black"
             android:paddingVertical="@dimen/_10sdp"
-            android:background="@drawable/bg_continue"/>
+            android:background="@drawable/bg_continue"
+            android:textAllCaps="false"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_continue"
@@ -38,7 +39,8 @@
             android:textSize="@dimen/_12sdp"
             android:textColor="@color/black"
             android:paddingVertical="@dimen/_10sdp"
-            android:background="@drawable/bg_continue"/>
+            android:background="@drawable/bg_continue"
+            android:textAllCaps="false"/>
 
     </LinearLayout>
 

@@ -16,4 +16,8 @@
     <string name="volume_control_is_active">Volume Control is Active</string>
     <string name="how_does_it_work">How Does It Work?</string>
     <string name="continue_to_app">Continue to App</string>
+    <string name="what_is_volume_guardian">What is Volume Guardian?</string>
+    <string name="faq_desc_1">Volume Guardian Runs in the background and listens to you. As soon as it discovers someone is speaking, it reduces the music volume for better communication.</string>
+    <string name="how_to_activate_volume_guardian">How to Activate Volume Guardian?</string>
+    <string name="faq_desc_2">On the next screen, press the button with the speaker and minimize the application using home button</string>
 </resources>

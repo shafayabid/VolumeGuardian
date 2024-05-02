@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_purple"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".view.fragment.FAQFragment">
+
+    <TextView
+        android:id="@+id/tv_faq_title_1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_extrabold"
+        android:text="@string/what_is_volume_guardian"
+        android:textSize="@dimen/_16sdp"
+        android:textColor="@color/black"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_faq_desc_1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:fontFamily="@font/poppins"
+        android:text="@string/faq_desc_1"
+        android:textSize="@dimen/_12sdp"
+        android:textColor="@color/white"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_faq_title_1" />
+
+    <TextView
+        android:id="@+id/tv_faq_title_2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_extrabold"
+        android:text="@string/how_to_activate_volume_guardian"
+        android:textSize="@dimen/_16sdp"
+        android:textColor="@color/black"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_faq_desc_1" />
+
+    <TextView
+        android:id="@+id/tv_faq_desc_2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:fontFamily="@font/poppins"
+        android:text="@string/faq_desc_2"
+        android:textSize="@dimen/_12sdp"
+        android:textColor="@color/white"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_faq_title_2" />
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_continue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:text="@string/continue_to_app"
+        android:fontFamily="@font/poppins_extrabold"
+        android:textSize="@dimen/_12sdp"
+        android:textColor="@color/black"
+        android:paddingVertical="@dimen/_10sdp"
+        android:background="@drawable/bg_continue"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
