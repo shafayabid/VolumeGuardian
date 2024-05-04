@@ -4,9 +4,8 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.shafay.volumeguardian.R
+import androidx.appcompat.app.AppCompatActivity
 import com.shafay.volumeguardian.databinding.ActivityMainBinding
 import com.shafay.volumeguardian.service.NotificationConsts
 

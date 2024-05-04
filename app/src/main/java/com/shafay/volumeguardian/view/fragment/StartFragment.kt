@@ -39,7 +39,13 @@ class StartFragment : Fragment() {
             }
         }
 
-        
+        binding.btnHow.setOnClickListener {
+            findNavController().apply {
+                if(currentDestination?.id == R.id.startFragment){
+                    findNavController().navigate(R.id.FAQFragment)
+                }
+            }
+        }
 
     }
 }

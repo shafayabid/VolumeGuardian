@@ -26,6 +26,27 @@ android {
             )
         }
     }
+
+    flavorDimensions += "dimension"
+
+    productFlavors {
+        create("withFirebase") {
+            dimension = "dimension"
+            applicationIdSuffix = ".withFirebase"
+            versionNameSuffix = "-withFirebase"
+            if (gradle.startParameter.taskRequests.toString().contains("WithFirebase"))
+            {
+                apply(plugin = "com.google.gms.google-services")
+                apply(plugin = "com.google.firebase.crashlytics")
+            }
+        }
+        create("withoutFirebase") {
+            dimension = "dimension"
+            applicationIdSuffix = ".withoutFirebase"
+            versionNameSuffix = "-withoutFirebase"
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -52,6 +73,13 @@ dependencies {
 
     //sdp
     implementation ("com.intuit.sdp:sdp-android:1.1.1")
+
+    //Firebase Crashlytics
+    "withFirebaseImplementation"(platform("com.google.firebase:firebase-bom:32.8.1"))
+    "withFirebaseImplementation"("com.google.firebase:firebase-crashlytics")
+
+    //Firebase Analytics
+//    "withFirebaseImplementation"("com.google.firebase:firebase-analytics-ktx")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
